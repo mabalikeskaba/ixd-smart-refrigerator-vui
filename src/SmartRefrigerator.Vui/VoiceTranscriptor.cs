@@ -43,12 +43,19 @@ namespace SmartRefrigerator.Vui
     /// <returns>A Task to await.</returns>
     public async Task StopRecordingAsync()
     {
-      mAudioCapture.Stop();
-      while (!_bufferQueue.IsEmpty && StreamingIsBusy)
+      try
       {
-        await Task.Delay(90);
+        mAudioCapture.Stop();
+        while (!_bufferQueue.IsEmpty && StreamingIsBusy)
+        {
+          await Task.Delay(90);
+        }
+        Transcription = mSttClient.FinishStream(mSttStream);
       }
-      Transcription = mSttClient.FinishStream(mSttStream);
+      catch(Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
     }
 
     /// <summary>
@@ -107,14 +114,21 @@ namespace SmartRefrigerator.Vui
     /// </summary>
     private void OnNewData()
     {
-      while (!StreamingIsBusy && !_bufferQueue.IsEmpty)
+      try
       {
-        if (_bufferQueue.TryDequeue(out short[] buffer))
+        while (!StreamingIsBusy && !_bufferQueue.IsEmpty)
         {
-          StreamingIsBusy = true;
-          mSttClient.FeedAudioContent(mSttStream, buffer, Convert.ToUInt32(buffer.Length));
-          StreamingIsBusy = false;
+          if (_bufferQueue.TryDequeue(out short[] buffer))
+          {
+            StreamingIsBusy = true;
+            mSttClient.FeedAudioContent(mSttStream, buffer, Convert.ToUInt32(buffer.Length));
+            StreamingIsBusy = false;
+          }
         }
+      }
+      catch(Exception e)
+      {
+        Console.WriteLine(e.Message);
       }
     }
   }

@@ -15,20 +15,32 @@ namespace SmartRefrigerator.Vui
 
     public void Add(string[] voiceInput)
     {
-      foreach (var inputString in voiceInput)
+      if (voiceInput != null)
       {
-        if (mTrackableKeywords.Contains(inputString.ToLower()))
+        foreach (var inputString in voiceInput)
         {
-          mShoppingList.Add(inputString);
+          if (mTrackableKeywords.Contains(inputString.ToLower()) && !mShoppingList.Contains(inputString))
+          {
+            mShoppingList.Add(inputString);
+          }
         }
       }
     }
 
+    public void AddLasagnaIngredients()
+    {
+      Add(new string[] { "lasagna plates", "vegetables", "cheese", "salt", "pepper", "tomato sauce" });
+    }
+
     public void SpeakShoppingList()
     {
+      var i = 0;
       foreach (var item in mShoppingList)
       {
+        if(i == mShoppingList.Count - 1)
+          VoiceSynthesizer.Instance().Speak("and");
         VoiceSynthesizer.Instance().Speak(item);
+        i++;
       }
     }
   }

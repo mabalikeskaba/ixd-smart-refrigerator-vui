@@ -8,5 +8,6 @@ namespace SmartRefrigerator.Vui
     public int Id { get; set; }
     public IList<string> Keywords { get; set; }
     public bool IsListAnswer => Keywords.Count == 1 && Keywords.ElementAt(0) == "*";
+    public bool IsMenuAnswer => Keywords.Count == 1 && Keywords.ElementAt(0) == ".";
   }
 }

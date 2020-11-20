@@ -15,13 +15,16 @@ namespace SmartRefrigerator.Vui
     private DialogStructure mDialogNodes;
     private ShoppingList mShoppingList;
     private DialogActions mDialogActions;
+    private List<int> mHandledNodes;
 
     public Dialog(List<string> trackableKeywords)
     { 
       mFridge = new Refrigerator();
-      mDialogNodes = JsonConvert.DeserializeObject<DialogStructure>(File.ReadAllText("dialog.json"));
+      var jsonDialog = File.ReadAllText("dialog.json");
+      mDialogNodes = JsonConvert.DeserializeObject<DialogStructure>(jsonDialog);
       mShoppingList = new ShoppingList(trackableKeywords);
       mDialogActions = new DialogActions(mShoppingList);
+      mHandledNodes = new List<int>();
     }
 
     public void Begin()
@@ -73,6 +76,17 @@ namespace SmartRefrigerator.Vui
 
       while (!currentNode.IsEndNode)
       {
+        // When node should only be executed once, jump to alternate node
+        if(currentNode.AskOnce && mHandledNodes.Contains(currentNode.Id))
+        {
+          currentNode = mDialogNodes.DialogNodes.First(x => x.Id == currentNode.AlternateNode);
+          continue;
+        }
+
+        // Add current node to already handled nodes
+        if (!mHandledNodes.Contains(currentNode.Id))
+          mHandledNodes.Add(currentNode.Id);
+
         if (!didNotUnderstand)
           VoiceSynthesizer.Instance().Speak(currentNode.SpeechText);
         else
@@ -111,7 +125,7 @@ namespace SmartRefrigerator.Vui
         if (node.IsListAnswer)
         {
           mShoppingList.Add(answerString.Split(' '));
-          break;
+          return mDialogNodes.DialogNodes.First(x => x.Id == pathNode.DialogNode);
         }
         foreach (var answer in answerString.Split(' '))
         {
