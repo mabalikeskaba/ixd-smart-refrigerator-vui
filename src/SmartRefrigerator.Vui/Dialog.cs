@@ -4,30 +4,29 @@ using SmartRefrigeratorVui;
 using System;
 using System.Linq;
 using System.IO;
-using System.Speech.Synthesis;
 using System.Collections.Generic;
 
 namespace SmartRefrigerator.Vui
 {
   public class Dialog
   {
-    private readonly SpeechSynthesizer mSpeech;
     private VoiceTranscriptor mVoiceTranscriptor;
     private Refrigerator mFridge;
     private DialogStructure mDialogNodes;
+    private ShoppingList mShoppingList;
+    private DialogActions mDialogActions;
 
-    public Dialog()
-    {
-      mSpeech = new SpeechSynthesizer();
-      mSpeech.SelectVoice("Microsoft Zira Desktop");
+    public Dialog(List<string> trackableKeywords)
+    { 
       mFridge = new Refrigerator();
       mDialogNodes = JsonConvert.DeserializeObject<DialogStructure>(File.ReadAllText("dialog.json"));
+      mShoppingList = new ShoppingList(trackableKeywords);
+      mDialogActions = new DialogActions(mShoppingList);
     }
 
     public void Begin()
     {
       SelectAudioDevice();
-
       InteractWithFridge();
     }
 
@@ -75,9 +74,9 @@ namespace SmartRefrigerator.Vui
       while (!currentNode.IsEndNode)
       {
         if (!didNotUnderstand)
-          Speak(currentNode.SpeechText);
+          VoiceSynthesizer.Instance().Speak(currentNode.SpeechText);
         else
-          Speak(didNotUnderstandText);
+          VoiceSynthesizer.Instance().Speak(didNotUnderstandText);
 
         if (!currentNode.IsListenOnly)
         {
@@ -85,16 +84,19 @@ namespace SmartRefrigerator.Vui
           mVoiceTranscriptor.GetNextRecording().Wait();
           Console.WriteLine(mVoiceTranscriptor.Transcription);
         }
-        var nextNode = GetNextNodeFromAnswer(currentNode, mVoiceTranscriptor.Transcription);
-        foreach (var item in currentNode.ItemList)
+        if(currentNode.PostSpeakingActions != null)
         {
-          Speak(item);
+          foreach(var action in currentNode.PostSpeakingActions)
+          {
+            mDialogActions.ExecuteAction(action);
+          }
         }
+        var nextNode = GetNextNodeFromAnswer(currentNode, mVoiceTranscriptor.Transcription);
 
         didNotUnderstand = nextNode == null;
         currentNode = !didNotUnderstand ? nextNode : currentNode;
       }
-      Speak(currentNode.SpeechText);
+      VoiceSynthesizer.Instance().Speak(currentNode.SpeechText);
     }
 
     private DialogNode GetNextNodeFromAnswer(DialogNode currentNode, string answerString)
@@ -108,7 +110,7 @@ namespace SmartRefrigerator.Vui
         var node = mDialogNodes.AnswerNodes.First(x => x.Id == pathNode.AnswerNode);
         if (node.IsListAnswer)
         {
-          currentNode.ItemList.Add(answerString);
+          mShoppingList.Add(answerString.Split(' '));
           break;
         }
         foreach (var answer in answerString.Split(' '))
@@ -121,11 +123,6 @@ namespace SmartRefrigerator.Vui
       }
 
       return null;
-    }
-
-    private void Speak(string text)
-    {
-      mSpeech.Speak(text);
     }
   }
 }

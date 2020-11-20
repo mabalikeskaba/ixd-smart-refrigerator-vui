@@ -1,10 +1,14 @@
-﻿namespace SmartRefrigerator.Vui
+﻿using System.IO;
+using System.Linq;
+
+namespace SmartRefrigerator.Vui
 {
   public class Program
   {
     static void Main()
     {
-      new Dialog().Begin(); 
+      var trackableKeywords = File.ReadAllLines("trackable-keywords.txt").ToList();
+      new Dialog(trackableKeywords).Begin(); 
     }
   }
 }

@@ -80,12 +80,15 @@
     <Compile Include="AudioDevicePool.cs" />
     <Compile Include="AnswerNode.cs" />
     <Compile Include="Dialog.cs" />
+    <Compile Include="DialogActions.cs" />
     <Compile Include="DialogStructure.cs" />
     <Compile Include="PathNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Refrigerator.cs" />
     <Compile Include="DialogNode.cs" />
+    <Compile Include="ShoppingList.cs" />
+    <Compile Include="VoiceSynthesizer.cs" />
     <Compile Include="VoiceTranscriptor.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +109,9 @@ copy $(ProjectDir)fridge-content.txt $(ProjectDir)bin\x64\Debug\fridge-content.t
 
 copy $(ProjectDir)deepspeech-0.9.1-models.pbmm $(ProjectDir)bin\Debug\deepspeech-0.9.1-models.pbmm
 copy $(ProjectDir)deepspeech-0.9.1-models.pbmm $(ProjectDir)bin\x64\Debug\deepspeech-0.9.1-models.pbmm
+
+copy $(ProjectDir)trackable-keywords.txt $(ProjectDir)bin\Debug\trackable-keywords.txt
+copy $(ProjectDir)trackable-keywords.txt $(ProjectDir)bin\x64\Debug\trackable-keywords.txt
 
 copy $(ProjectDir)dialog.json $(ProjectDir)bin\Debug\dialog.json
 copy $(ProjectDir)dialog.json $(ProjectDir)bin\x64\Debug\dialog.json</PostBuildEvent>

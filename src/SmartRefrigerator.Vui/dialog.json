@@ -2,13 +2,13 @@
    "DialogNodes":[
       {
          "Id":1,
-         "SpeechText":"Looks like you have not much edibles in your refrigerator left. Should I create a shopping list for you?",
+         "SpeechText":"Should I create a shopping list for you?",
          "AnswerNodeIds":[
             {
                "AnswerNode":1,
                "DialogNode":3
             },
-			{
+            {
                "AnswerNode":2,
                "DialogNode":2
             }
@@ -24,19 +24,19 @@
             }
          ]
       },
-	  {
+      {
          "Id":3,
          "SpeechText":"Alrighty then, what should I write down?",
          "AnswerNodeIds":[
             {
-               "AnswerNode":4,
-               "DialogNode":5
-            },
-			{
                "AnswerNode":3,
                "DialogNode":4
             },
-			{
+            {
+               "AnswerNode":4,
+               "DialogNode":5
+            },
+            {
                "AnswerNode":2,
                "DialogNode":8
             }
@@ -48,7 +48,7 @@
          "AnswerNodeIds":[
             {
                "AnswerNode":0,
-               "DialogNode":7
+               "DialogNode":5
             }
          ]
       },
@@ -60,10 +60,10 @@
                "AnswerNode":1,
                "DialogNode":6
             },
-			{
+            {
                "AnswerNode":2,
-               "DialogNode":8
-            },
+               "DialogNode":7
+            }
          ]
       },
       {
@@ -73,7 +73,10 @@
             {
                "AnswerNode":0,
                "DialogNode":7
-            },
+            }
+         ],
+         "PostSpeakingActions":[
+            "SpeakShoppingList"
          ]
       },
       {
@@ -82,15 +85,15 @@
          "AnswerNodeIds":[
             {
                "AnswerNode":1,
-               "DialogNode":6
+               "DialogNode":3
             },
-			{
+            {
                "AnswerNode":2,
-               "DialogNode":5
+               "DialogNode":8
             }
          ]
       },
-	  {
+      {
          "Id":8,
          "SpeechText":"Alright then",
          "AnswerNodeIds":[
@@ -107,8 +110,8 @@
             "ja",
             "okay",
             "alright",
-			"please",
-			"hes"
+            "please",
+            "hes"
          ]
       },
       {
@@ -120,21 +123,21 @@
             "shut up",
             "not",
             "nope",
-			"stop",
-			"nothing"
+            "stop",
+            "nothing"
          ]
       },
-	  {
+      {
          "Id":3,
          "Keywords":[
             "soup"
          ]
       },
-	  {
+      {
          "Id":4,
          "Keywords":[
             "*"
          ]
-      },
+      }
    ]
 }
